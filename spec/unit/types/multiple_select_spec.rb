@@ -107,46 +107,46 @@ describe CustomFields::Types::MultipleSelect do
 
   # end
 
-  # describe 'getter and setter' do
+  describe 'getter and setter' do
 
-  #   it 'returns an empty hash if no value has been set' do
-  #     expected = {}
+    it 'returns an empty hash if no value has been set' do
+      expected = {}
 
-  #     expect(post.class.select_attribute_get(post, 'main_category')).to eq expected
-  #   end
+      expect(post.class.multiple_select_attribute_get(post, 'categories')).to eq expected
+    end
 
-  #   it 'returns the value' do
-  #     post.main_category = 'Test'
+    it 'returns the value' do
+      post.categories = ['Test']
 
-  #     expected = {
-  #       'main_category'     => 'Test',
-  #       'main_category_id'  => field.select_options.first._id
-  #     }
+      expected = {
+        'categories'     => ['Test'],
+        'categories_id'  => [field.multiple_select_options.first._id]
+      }
 
-  #     expect(post.class.select_attribute_get(post, 'main_category')).to eq expected
-  #   end
+      expect(post.class.multiple_select_attribute_get(post, 'categories')).to eq expected
+    end
 
-  #   it 'sets a nil value' do
-  #     expect(post.class.select_attribute_set(post, 'main_category', {})).to be_nil
-  #   end
+    it 'sets a nil value' do
+      expect(post.class.multiple_select_attribute_set(post, 'categories', {})).to be_nil
+    end
 
-  #   it 'sets a value from a name' do
-  #     post.class.select_attribute_set(post, 'main_category', { 'main_category' => 'Test' })
+    it 'sets a value from a name' do
+      post.class.multiple_select_attribute_set(post, 'categories', { 'categories' => ['Test'] })
 
-  #     expect(post.main_category).to eq 'Test'
-  #   end
+      expect(post.categories).to eq ['Test']
+    end
 
-  #   it 'sets a value from an id' do
-  #     post.class.select_attribute_set(post, 'main_category', { 'main_category' => field.select_options.first._id })
+    it 'sets a value from an id' do
+      post.class.multiple_select_attribute_set(post, 'categories', { 'categories' => [field.multiple_select_options.first._id] })
 
-  #     expect(post.main_category).to eq 'Test'
+      expect(post.categories).to eq ['Test']
 
-  #     post.class.select_attribute_set(post, 'main_category', { 'main_category_id' => field.select_options.first._id })
+      post.class.multiple_select_attribute_set(post, 'categories', { 'categories_id' => [field.multiple_select_options.first._id] })
 
-  #     expect(post.main_category).to eq 'Test'
-  #   end
+      expect(post.categories).to eq ['Test']
+    end
 
-  # end
+  end
 
   protected
 
@@ -154,7 +154,6 @@ describe CustomFields::Types::MultipleSelect do
     Blog.new(name: 'My personal blog').tap do |blog|
       field = blog.posts_custom_fields.build label: 'Categories', type: 'multiple_select', required: true, default: ['IT']
       field.multiple_select_options.build name: 'Test'
-      field.multiple_select_options.build name: 'Test2'
       field.valid?
     end
   end

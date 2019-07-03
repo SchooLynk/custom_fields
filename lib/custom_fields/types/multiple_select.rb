@@ -102,7 +102,8 @@ module CustomFields
           # @return [ Hash ] fields: <name>: option name, <name>_id: id of the option
           #
           def multiple_select_attribute_get(instance, name)
-            if value = instance.send(name.to_sym)
+            value = instance.send(name.to_sym)
+            if value.present?
               {
                 name          => value,
                 "#{name}_id"  => instance.send(:"#{name}_id")
@@ -120,15 +121,15 @@ module CustomFields
           # @param [ Hash ] attributes The attributes used to fetch the values
           #
           def multiple_select_attribute_set(instance, name, attributes)
-            id_or_name  = attributes[name] || attributes["#{name}_id"]
+            ids_or_names  = attributes[name] || attributes["#{name}_id"]
 
-            return if id_or_name.nil?
+            return if ids_or_names.nil?
 
-            option = _multiple_select_options(name).detect do |option|
-              [option['_id'], option['name']].include?(id_or_name)
-            end
+            options = _multiple_select_options(name).select do |option|
+              ids_or_names.include?(option['name']) || ids_or_names.map(&:to_s).include?(option['_id'].to_s)
+            end.map{|opt| opt['_id']}
 
-            instance.send(:"#{name}_id=", option.try(:[], '_id'))
+            instance.send(:"#{name}_id=", options)
           end
 
           # Returns a list of documents groupes by select values defined in the custom fields recipe
