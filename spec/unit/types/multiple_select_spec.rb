@@ -9,7 +9,7 @@ describe CustomFields::Types::MultipleSelect do
   end
 
   it 'stores the list of categories' do
-    expect(field.respond_to?(:select_options)).to be true
+    expect(field.respond_to?(:multiple_select_options)).to be true
   end
 
   it 'stores the type of html tag' do
@@ -23,11 +23,11 @@ describe CustomFields::Types::MultipleSelect do
   end
 
   it 'includes the categories in the as_json method' do
-    expect(field.as_json['select_options']).not_to be_empty
+    expect(field.as_json['multiple_select_options']).not_to be_empty
   end
 
   it 'adds the categories when calling to_recipe' do
-    expect(field.to_recipe['select_options']).not_to be_empty
+    expect(field.to_recipe['multiple_select_options']).not_to be_empty
   end
 
   it 'sets a value' do
@@ -35,30 +35,35 @@ describe CustomFields::Types::MultipleSelect do
     expect(post.categories).to eq ['Test']
   end
 
-  # describe 'validation' do
+  describe 'validation' do
+    [nil, ''].each do |value|
+      it "raise error if the value is #{value.inspect}" do
+        expect { post.categories = value }.to raise_error(ArgumentError)
+      end      
+    end
 
-  #   [nil, ''].each do |value|
-  #     it "should not valid if the value is #{value.inspect}" do
-  #       post.main_category = value
-  #       expect(post.valid?).to eq false
-  #       expect(post.errors[:main_category]).not_to be_blank
-  #     end
-  #   end
+    [[nil], ['']].each do |value|
+      it "should not valid if the value is #{value.inspect}" do
+        post.categories = value
+        expect(post.valid?).to eq false
+        expect(post.errors[:categories]).not_to be_blank
+      end
+    end
 
-  # end
+  end
 
-  # describe 'default value' do
+  describe 'default value' do
 
-  #   before do
-  #     field.select_options.build name: 'Marketing'
-  #     field.select_options.build name: 'IT'
-  #   end
+    before do
+      field.multiple_select_options.build name: 'Marketing'
+      field.multiple_select_options.build name: 'IT'
+    end
 
-  #   subject { post.main_category }
+    subject { post.categories }
 
-  #   it { is_expected.to eq 'IT' }
+    it { is_expected.to eq ['IT'] }
 
-  # end
+  end
 
   # context '#localize' do
 
@@ -148,7 +153,8 @@ describe CustomFields::Types::MultipleSelect do
   def build_blog
     Blog.new(name: 'My personal blog').tap do |blog|
       field = blog.posts_custom_fields.build label: 'Categories', type: 'multiple_select', required: true, default: ['IT']
-      field.select_options.build name: 'Test'
+      field.multiple_select_options.build name: 'Test'
+      field.multiple_select_options.build name: 'Test2'
       field.valid?
     end
   end
