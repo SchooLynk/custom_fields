@@ -12,16 +12,6 @@ describe CustomFields::Types::MultipleSelect do
     expect(field.respond_to?(:multiple_select_options)).to be true
   end
 
-  it 'stores the type of html tag' do
-    expect(field.respond_to?(:form_tag_type)).to be true
-    expect(field.form_tag_type).not_to be_empty
-  end
-
-  it 'sets the type of html tag' do
-    field.form_tag_type = CustomFields::Types::MultipleSelect::Field::AVAILABLE_FORM_TAG_TYPES.first
-    expect(field.form_tag_type).to eq(CustomFields::Types::MultipleSelect::Field::AVAILABLE_FORM_TAG_TYPES.first)
-  end
-
   it 'includes the categories in the as_json method' do
     expect(field.as_json['multiple_select_options']).not_to be_empty
   end
@@ -33,6 +23,12 @@ describe CustomFields::Types::MultipleSelect do
   it 'sets a value' do
     post.categories = ['Test']
     expect(post.categories).to eq ['Test']
+  end
+
+  it 'sets a appearance type' do
+    field.update(appearance_type: 'checkbox')
+    field.reload
+    expect(field.appearance_type).to eq 'checkbox'
   end
 
   describe 'validation' do
@@ -50,6 +46,15 @@ describe CustomFields::Types::MultipleSelect do
       end
     end
 
+    it "should not accepts invalid appearance type" do
+      field.appearance_type = 'invalid'
+      expect(blog.valid?).to eq false
+    end
+
+    it "should accepts valid appearance type" do
+      field.appearance_type = CustomFields::Types::MultipleSelect::Field::AVAILABLE_APPEARANCE_TYPES.first
+      expect(blog.valid?).to eq true
+    end
   end
 
   describe 'default value' do

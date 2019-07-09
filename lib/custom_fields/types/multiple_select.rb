@@ -25,19 +25,14 @@ module CustomFields
 
         extend ActiveSupport::Concern
 
-        included do
-          AVAILABLE_FORM_TAG_TYPES = %w(checkbox select_multiple)
+        AVAILABLE_APPEARANCE_TYPES = %w(checkbox select_multiple)
 
+        included do
           embeds_many :multiple_select_options, class_name: 'CustomFields::Types::MultipleSelect::Option'
 
           validates_associated :multiple_select_options
 
           accepts_nested_attributes_for :multiple_select_options, allow_destroy: true
-
-          field :form_tag_type, default: 'checkbox', type: ::String
-
-          validates_inclusion_of  :form_tag_type, in: AVAILABLE_FORM_TAG_TYPES, allow_blank: false
-
         end
 
         def ordered_multiple_select_options

@@ -26,13 +26,13 @@ module CustomFields
         extend ActiveSupport::Concern
 
         included do
+          AVAILABLE_APPEARANCE_TYPES = %w(pulldown radiobutton)
 
           embeds_many :select_options, class_name: 'CustomFields::Types::Select::Option'
 
           validates_associated :select_options
 
           accepts_nested_attributes_for :select_options, allow_destroy: true
-
         end
 
         def ordered_select_options
