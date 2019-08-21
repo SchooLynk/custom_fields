@@ -13,19 +13,19 @@ describe CustomFields::Types::MultipleSelect do
     it 'sets the category from an existing name' do
       @post.main_category = ['Development']
 
-      expect(@post.attributes['main_category_id']).to eq @development_cat._id
+      expect(@post.attributes['main_category_id']).to eq [@development_cat._id]
     end
 
     it 'sets the category from an id' do
       @post.main_category = [@development_cat._id]
 
-      expect(@post.attributes['main_category_id']).to eq @development_cat._id
+      expect(@post.attributes['main_category_id']).to eq [@development_cat._id]
     end
 
     it 'returns the name of the category' do
       @post.main_category = [@design_cat._id]
 
-      expect(@post.main_category).to eq 'Design'
+      expect(@post.main_category).to eq ['Design']
     end
 
   end
@@ -33,7 +33,7 @@ describe CustomFields::Types::MultipleSelect do
   context 'an existing post' do
 
     before(:each) do
-      @post = @blog.posts.create title: 'Hello world', body: 'Lorem ipsum...', main_category: @marketing_cat._id
+      @post = @blog.posts.create title: 'Hello world', body: 'Lorem ipsum...', main_category: [@marketing_cat._id]
 
       @post = Post.find @post._id
     end
@@ -116,31 +116,31 @@ describe CustomFields::Types::MultipleSelect do
     before(:each) do
       Mongoid::Fields::I18n.locale = :en
 
-      @post = @blog.posts.create title: 'Hello world', body: 'Lorem ipsum...', author: 'Mister Foo'
+      @post = @blog.posts.create title: 'Hello world', body: 'Lorem ipsum...', author: ['Mister Foo']
 
       @post = Post.find @post._id
     end
 
     it 'serializes / deserializes' do
-      expect(@post.author).to eq 'Mister Foo'
+      expect(@post.author).to eq ['Mister Foo']
     end
 
     it 'serializes / deserializes with a different locale' do
       Mongoid::Fields::I18n.locale = :fr
 
-      expect(@post.author).to eq 'Monsieur Foo'
+      expect(@post.author).to eq ['Monsieur Foo']
 
-      @post.author = 'Monsieur Bar'
+      @post.author = ['Monsieur Bar']
 
       @post.save
 
       @post = Post.find @post._id
 
-      expect(@post.author).to eq 'Monsieur Bar'
+      expect(@post.author).to eq ['Monsieur Bar']
 
       Mongoid::Fields::I18n.locale = :en
 
-      expect(@post.author).to eq 'Mister Foo'
+      expect(@post.author).to eq ['Mister Foo']
     end
 
     it 'displays all the categories' do
