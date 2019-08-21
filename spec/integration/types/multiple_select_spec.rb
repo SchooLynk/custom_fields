@@ -72,45 +72,6 @@ describe CustomFields::Types::MultipleSelect do
 
   end
 
-  describe 'group_by' do
-
-    before(:each) do
-      @blog.posts.create title: 'Hello world 1(Development)',  body: 'Lorem ipsum...', main_category: [@development_cat._id]
-      @blog.posts.create title: 'Hello world (Design)',        body: 'Lorem ipsum...', main_category: [@design_cat._id]
-      @blog.posts.create title: 'Hello world 2 (Development)', body: 'Lorem ipsum...', main_category: [@development_cat._id]
-      @blog.posts.create title: 'Hello world 3 (Development)', body: 'Lorem ipsum...', main_category: [@development_cat._id]
-      @blog.posts.create title: 'Hello world (Unknow)',        body: 'Lorem ipsum...', main_category: [BSON::ObjectId.new]
-      @blog.posts.create title: 'Hello world (Unknow) 2',      body: 'Lorem ipsum...', main_category: [BSON::ObjectId.new]
-
-      klass = @blog.klass_with_custom_fields :posts
-      @groups = klass.group_by_select_option :main_category
-    end
-
-    it 'is an non empty array' do
-      expect(@groups.class).to be Array
-
-      expect(@groups.size).to eq 4
-    end
-
-    it 'is an array of hashes composed of a name' do
-      expect(@groups.map { |g| g[:name].to_s }).to eq ['Design', 'Development', 'Marketing', '']
-    end
-
-    it 'is an array of hashes composed of a list of documents' do
-      expect(@groups[0][:entries].size).to be 1
-      expect(@groups[1][:entries].size).to be 3
-      expect(@groups[2][:entries].size).to be 0
-      expect(@groups[3][:entries].size).to be 2
-    end
-
-    it 'can be accessed from the parent document' do
-      blog = Blog.find @blog._id
-
-      expect(blog.posts.group_by_select_option(:main_category).class).to be Array
-    end
-
-  end
-
   describe '#localize' do
 
     before(:each) do
