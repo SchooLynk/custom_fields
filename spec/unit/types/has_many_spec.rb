@@ -17,6 +17,12 @@ describe CustomFields::Types::HasMany do
     expect(@author.posts.map(&:title)).to eq ['Hello world', 'Keep writing']
   end
 
+  it 'sets a value via nested_attributes setter' do
+    @author.posts_attributes = [{title: 'Hello world', body: 'Lorem ipsum...'}, {title: 'Keep writing', body: 'Lorem ipsum...'}]
+
+    expect(@author.posts.map(&:title)).to eq ['Hello world', 'Keep writing']
+  end
+
   it 'includes a scope named ordered' do
     expect(@author.posts.respond_to?(:ordered)).to eq true
 
@@ -56,6 +62,14 @@ describe CustomFields::Types::HasMany do
 
     end
 
+    context 'when it has invalid elements' do
+      it 'returns validation error' do
+        @author.tags_attributes = [{ name: 'short'}]
+        expect(@author.valid?).to eq false
+        expect(@author.errors.details.keys).to include(:tags)
+      end
+    end
+
   end
 
   context 'multi-thread environment' do
@@ -71,8 +85,15 @@ describe CustomFields::Types::HasMany do
   end
 
   protected
+  class Tag
+    include Mongoid::Document
+    field :name
+    validates :name, length: { minimum: 8 }
+    belongs_to :taggable, polymorphic: true
+  end
 
   def build_blog
+
     Blog.new(name: 'My personal blog').tap do |blog|
       field = blog.posts_custom_fields.build  label: 'Author', type: 'belongs_to', class_name: 'Person', required: true
 
@@ -80,6 +101,10 @@ describe CustomFields::Types::HasMany do
 
       field = blog.people_custom_fields.build label: 'Posts', type: 'has_many', class_name: "Post#{blog._id}", inverse_of: 'author', required: true
 
+      field.valid?
+
+      field = blog.people_custom_fields.build label: 'Tags', type: 'has_many', class_name: "Tag", inverse_of: 'taggable', required: true
+  
       field.valid?
     end
   end

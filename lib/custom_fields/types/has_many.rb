@@ -33,7 +33,7 @@ module CustomFields
             _inverse_of = rule['inverse_of'].blank? ? nil : rule['inverse_of'] # an empty String can cause weird behaviours
             _as = rule['as'].blank? ? nil : rule['as']
 
-            options = { class_name: rule['class_name'], order: _order_by, validate: false }
+            options = { class_name: rule['class_name'], order: _order_by, validate: true }
             options.merge!(as: _as) if _as.present?
             options.merge!(inverse_of: _inverse_of) if _inverse_of.present?
             klass.has_many rule['name'], options do
