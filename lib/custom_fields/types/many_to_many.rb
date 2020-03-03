@@ -62,6 +62,8 @@ module CustomFields
 
             end
 
+            klass.accepts_nested_attributes_for rule['name'], allow_destroy: true
+
             if rule['required']
               klass.validates_collection_size_of rule['name'], minimum: 1, message: :at_least_one_element
             end

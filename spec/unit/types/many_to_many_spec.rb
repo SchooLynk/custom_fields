@@ -21,6 +21,15 @@ describe CustomFields::Types::ManyToMany do
     expect(@post.authors.respond_to?(:ordered)).to eq true
   end
 
+  it 'accepts nested attributes' do
+    expect(@post.respond_to?(:authors_attributes=)).to be_truthy
+  end
+
+  it 'sets a value via nested attributes' do
+    @post.authors_attributes = [{ name: 'John Doe' }, { name: 'Jane Doe' }]
+    expect(@post.authors.map(&:name)).to eq ['John Doe', 'Jane Doe']
+  end
+
   describe 'validation' do
 
     [nil, []].each do |value|
