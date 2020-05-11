@@ -1,7 +1,7 @@
 module CustomFields
   module Validators
     class EmailAddressValidator < ActiveModel::Validator
-      EMAIL_REGEXP = /\A([\w+\-].?)+@[a-z\d\-]+(\.[a-z]+)*\.[a-z]+\z/i
+      EMAIL_REGEXP = /\A([\w+\-].?)+@[a-z\d\-]+(\.[a-z\-]+)*\.[a-z]+\z/i
       def initialize(options={})
         @opt = options
       end
