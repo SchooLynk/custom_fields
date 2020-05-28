@@ -18,11 +18,11 @@ describe CustomFields::Types::BelongsTo do
       expect(@post.author.name).to eq 'John Doe'
     end
 
-    it 'increments the position' do
-      save_post @post, @author
+    # it 'increments the position' do
+    #   save_post @post, @author
 
-      expect(@post.position_in_author).to eq 1
-    end
+    #   expect(@post.position_in_author).to eq 1
+    # end
 
   end
 

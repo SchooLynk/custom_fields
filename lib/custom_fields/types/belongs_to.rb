@@ -52,8 +52,8 @@ module CustomFields
             end
 
             klass.before_create do |object|
-              position = (object.class.max(position_name.to_sym) || 0) + 1
-              object.send(:"#{position_name}=", position)
+              # position = (object.class.max(position_name.to_sym) || 0) + 1
+              object.send(:"#{position_name}=", 0)
             end
           end
 
